@@ -1,0 +1,41 @@
+name: Main
+on: [push]
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Get current time
+      uses: srfrnk/current-time@v1.1.0
+      id: current-time
+      with:
+        format: YYYYMMDDHHss
+
+    - name: Set up Go 1.16
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.16
+      id: go
+
+    - name: Install tools
+      run: |
+        sudo apt update
+        sudo apt-get install -y build-essential devscripts debhelper gettext-base
+        go get fyne.io/fyne/v2/cmd/fyne
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+
+    - name: Package
+      run: |
+        cd ./cmd/shutterlimitswitchsetup
+        fyne package -os android/arm -appID hu.balazsgrill.shutterlimitswitchsetup -icon icon.png
+    
+    - uses: actions/upload-artifact@v1
+      with:
+        name: android package
+        path: "shutterlimitswitchsetup.apk"
+
+    
