@@ -35,6 +35,6 @@ jobs:
     - uses: actions/upload-artifact@v1
       with:
         name: android package
-        path: "shutterlimitswitchsetup.apk"
+        path: "cmd/shutterlimitswitchsetup/shutterlimitswitchsetup.apk"
 
     
