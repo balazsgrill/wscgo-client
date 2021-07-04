@@ -31,7 +31,7 @@ jobs:
     - name: Package
       run: |
         cd ./cmd/shutterlimitswitchsetup
-        ${GOPATH}/bin/fyne package -os android/arm -appID hu.balazsgrill.shutterlimitswitchsetup -icon icon.png
+        ${GOROOT}/bin/fyne package -os android/arm -appID hu.balazsgrill.shutterlimitswitchsetup -icon icon.png
     
     - uses: actions/upload-artifact@v1
       with:
