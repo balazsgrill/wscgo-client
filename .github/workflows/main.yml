@@ -29,6 +29,7 @@ jobs:
       env:
         GOPATH: /home/runner/work/go
       run: |
+        git clone https://github.com/balazsgrill/hass.git ../hass
         cd ./cmd/shutterlimitswitchsetup
         ${GOPATH}/bin/fyne package -os android/arm -appID hu.balazsgrill.shutterlimitswitchsetup -icon icon.png
     
