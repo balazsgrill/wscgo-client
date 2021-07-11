@@ -84,8 +84,11 @@ func SettingsDialogContent(p fyne.Preferences) fyne.CanvasObject {
 }
 
 func (instance *Main) ConsumeCover(c *hass.Cover, nodeID string, objectID string) {
+	_, exists := instance.data[c.Name]
 	instance.data[c.Name] = c
-	instance.coverSelect.Options = append(instance.coverSelect.Options, c.Name)
+	if !exists {
+		instance.coverSelect.Options = append(instance.coverSelect.Options, c.Name)
+	}
 	instance.coverSelect.Refresh()
 	log.Println(objectID)
 }
@@ -123,6 +126,12 @@ func (instance *Main) down() {
 	}
 }
 
+func (instance *Main) send(data string) {
+	if instance.current != nil {
+		instance.client.Publish(instance.current.CommandTopic, 0, false, data)
+	}
+}
+
 func main() {
 	app := &Main{
 		app:           app.NewWithID("WscgoClient"),
@@ -133,6 +142,8 @@ func main() {
 	app.mainwindow = app.app.NewWindow("Shutter Limit Switch Setup")
 	settingsdialog := SettingsDialogContent(app.app.Preferences())
 	app.coverSelect = widget.NewSelect([]string{}, app.selectChanged)
+
+	numCmdStr := binding.NewString()
 
 	app.mainwindow.SetContent(container.NewVBox(
 		widget.NewLabelWithData(app.statusLabel),
@@ -147,6 +158,14 @@ func main() {
 		widget.NewButton("Up", app.up),
 		widget.NewButton("Stop", app.stop),
 		widget.NewButton("Down", app.down),
+
+		widget.NewEntryWithData(numCmdStr),
+		widget.NewButton("Send", func() {
+			v, err := numCmdStr.Get()
+			if err == nil {
+				app.send(v)
+			}
+		}),
 	))
 
 	app.mainwindow.Resize(fyne.NewSize(400, 700))
